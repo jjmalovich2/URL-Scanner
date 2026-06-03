@@ -10,12 +10,16 @@ set(NPCAP_SDK_DIR "C:/npcap-sdk")
 add_executable(scanner
     src/main.cpp
     src/heuristic.hpp
+    src/gui.hpp
+    src/gui_common.hpp
+    src/stats.hpp
+    src/dashboard.hpp
 )
 
 # Include Npcap headers and libraries
 target_include_directories(scanner PRIVATE src "${NPCAP_SDK_DIR}/Include")
 target_link_directories(scanner PRIVATE "${NPCAP_SDK_DIR}/Lib/x64")
-target_link_libraries(scanner PRIVATE wpcap Packet)
+target_link_libraries(scanner PRIVATE wpcap Packet gdi32 user32)
 
 if(MSVC)
     target_compile_options(scanner PRIVATE /W4)

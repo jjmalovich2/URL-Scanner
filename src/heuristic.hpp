@@ -38,7 +38,7 @@ public:
             if (std::getline(ss, keyword, ',') && std::getline(ss, score_str)) {
                 try {
                     int score = std::stoi(score_str);
-                    suspicious_keywords[keyword] = std::stoi(score_str);
+                    suspicious_keywords[keyword] = score;
                 } catch (const std::exception& e) {
                     std::cerr << "Invalid score for keyword: " << keyword << " in file: " << file_path << std::endl;
                 }

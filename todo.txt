@@ -1,0 +1,88 @@
+URL SCANNER - TODO / IDEAS
+==========================
+
+HIGH PRIORITY (Usability & Core Functionality)
+-----------------------------------------------
+[ ] TLS/SNI Parsing - Most traffic is HTTPS on port 443. Currently the scanner only
+    reads plaintext HTTP "Host:" headers. Without parsing TLS Client Hello SNI,
+    the tool misses the vast majority of real-world traffic. This is the #1 gap.
+
+[ ] Domain Whitelist - Remember domains the user clicked "Allow" on so they don't
+    get nagged every time. Store in a local file (e.g., allowed_domains.txt).
+
+[ ] Configurable Thresholds - Move the hardcoded values (suspicious: 40/3.0,
+    action: 60/4.8) into the config/ folder so users can tune without recompiling.
+
+[ ] DPI-Aware Scaling - Replace SetProcessDPIAware() with per-monitor v2 awareness
+    and scale window sizes / fonts so the GUI isn't tiny or blurry on 4K/HiDPI screens.
+
+[ ] Admin Privilege Check - Warn at startup if not running as Administrator,
+    since both packet capture and hosts-file writing require elevation.
+
+[ ] Hosts File Backup - Create a timestamped backup of the system hosts file
+    before the scanner makes its first modification.
+
+MEDIUM PRIORITY (Quality of Life)
+----------------------------------
+[ ] Settings / Preferences Window - GUI panel to toggle sounds, set thresholds,
+    enable auto-block mode, and manage the whitelist without editing text files.
+
+[ ] Auto-Block Mode - Option to silently block high-confidence threats (e.g.
+    score >= 80 or entropy >= 5.5) without showing a popup. Only prompt on
+    medium-confidence hits.
+
+[ ] Interface Selection GUI - Replace the console-based network adapter menu
+    with a dropdown in the dashboard so the whole app can be mouse-driven.
+
+[ ] Persistent Stats - Save total/suspicious/blocked/allowed counts to a file
+    so the dashboard remembers history across restarts.
+
+[ ] Undo / Unblock from Dashboard - A way to remove a domain from the Windows
+    hosts file directly through the GUI instead of manual editing.
+
+[ ] Better DNS Parsing - Actually parse UDP port 53 DNS query packets instead
+    of running a regex over raw binary data.
+
+[ ] Sound Toggle - Let users mute the alert beep from the dashboard.
+
+LOW PRIORITY (Polish & Extras)
+-------------------------------
+[ ] Toast Notifications - For lower-priority hits, show a non-intrusive Windows
+    toast instead of a blocking modal dialog.
+
+[ ] Keyword Performance - std::regex is slow. Consider pre-compiling regexes,
+    using Aho-Corasick string matching, or a simple substring scan for the
+    keyword list to reduce CPU per packet.
+
+[ ] Structured Logging - Replace plain-text scan_history.txt with CSV or JSON
+    that includes timestamps for easier analysis later.
+
+[ ] Window Position Memory - Remember where the user last placed the dashboard
+    and restore it there on next launch.
+
+[ ] Keyboard Navigation - Allow Tab/Enter/Space to operate the Allow/Block popup
+    without reaching for the mouse.
+
+[ ] Start Minimized - Command-line flag or setting to launch the dashboard
+    directly to the taskbar.
+
+[ ] Startup with Windows - Optional registry entry to auto-launch the scanner
+    on boot (would need to run as a service or scheduled task).
+
+[ ] Colorblind-Friendly UI - Add icons or patterns to the Allow/Block buttons,
+    not just green/red color.
+
+BUGS / CODE DEBT
+----------------
+[ ] Thread-Safe Logging - scan_history.txt writes from packet_handler should
+    use a mutex if capture is ever parallelized.
+
+[ ] Packet Content Safety - packet_content is built with raw pkt_data bytes;
+    std::string operations on binary data could hit null bytes or cause
+    unexpected behavior with some string functions.
+
+[ ] Regex Exception Handling - The domain regex catch(...) silently swallows
+    errors. At minimum log the exception reason to stderr.
+
+[ ] Memory Leak Check - Ensure all GDI objects (fonts, brushes, regions) are
+    deleted properly in every window destruction path.
