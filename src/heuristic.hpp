@@ -12,13 +12,98 @@
 #include <cmath>
 #include <fstream>
 #include <regex>
+#include <cctype>
 #include <algorithm>
 
 class URLHeuristic {
 private:
     std::unordered_map<std::string, int> suspicious_keywords;
+    std::vector<std::string> whitelist;
+    std::vector<std::string> blacklist;
 
 public:
+    bool load_whitelist(const std::string& file_path) {
+        std::ifstream file(file_path);
+        if (!file.is_open()) {
+            return false;
+        }
+        whitelist.clear();
+        std::string line;
+        while (std::getline(file, line)) {
+            size_t start = 0;
+            while (start < line.size() && std::isspace(static_cast<unsigned char>(line[start]))) start++;
+            size_t end = line.size();
+            while (end > start && std::isspace(static_cast<unsigned char>(line[end - 1]))) end--;
+            if (start >= end) continue;
+            if (line[start] == '#') continue;
+            std::string trimmed = line.substr(start, end - start);
+            std::transform(trimmed.begin(), trimmed.end(), trimmed.begin(), ::tolower);
+            whitelist.push_back(trimmed);
+        }
+        return true;
+    }
+
+    bool is_whitelisted(const std::string& url) const {
+        std::string lower_url = url;
+        std::transform(lower_url.begin(), lower_url.end(), lower_url.begin(), ::tolower);
+        for (const auto& domain : whitelist) {
+            size_t pos = lower_url.find(domain);
+            if (pos == std::string::npos) continue;
+            if (pos > 0) {
+                char c = lower_url[pos - 1];
+                if (c != '.' && c != '/' && c != ':' && c != '@') continue;
+            }
+            size_t end = pos + domain.length();
+            if (end < lower_url.length()) {
+                char c = lower_url[end];
+                if (c != '/' && c != ':' && c != '?' && c != '&' && c != '#') continue;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool load_blacklist(const std::string& file_path) {
+        std::ifstream file(file_path);
+        if (!file.is_open()) {
+            return false;
+        }
+        blacklist.clear();
+        std::string line;
+        while (std::getline(file, line)) {
+            size_t start = 0;
+            while (start < line.size() && std::isspace(static_cast<unsigned char>(line[start]))) start++;
+            size_t end = line.size();
+            while (end > start && std::isspace(static_cast<unsigned char>(line[end - 1]))) end--;
+            if (start >= end) continue;
+            if (line[start] == '#') continue;
+            std::string trimmed = line.substr(start, end - start);
+            std::transform(trimmed.begin(), trimmed.end(), trimmed.begin(), ::tolower);
+            blacklist.push_back(trimmed);
+        }
+        return true;
+    }
+
+    bool is_blacklisted(const std::string& url) const {
+        std::string lower_url = url;
+        std::transform(lower_url.begin(), lower_url.end(), lower_url.begin(), ::tolower);
+        for (const auto& domain : blacklist) {
+            size_t pos = lower_url.find(domain);
+            if (pos == std::string::npos) continue;
+            if (pos > 0) {
+                char c = lower_url[pos - 1];
+                if (c != '.' && c != '/' && c != ':' && c != '@') continue;
+            }
+            size_t end = pos + domain.length();
+            if (end < lower_url.length()) {
+                char c = lower_url[end];
+                if (c != '/' && c != ':' && c != '?' && c != '&' && c != '#') continue;
+            }
+            return true;
+        }
+        return false;
+    }
+
     // load csv
     bool load_keywords(const std::string& file_path) {
         std::ifstream file(file_path);
@@ -88,5 +173,7 @@ public:
         return score;
     }
 };
+
+extern URLHeuristic g_scanner;
 
 #endif // HEURISTIC_HPP

@@ -1,0 +1,4 @@
+suspicious_score=40
+suspicious_entropy=3.8
+action_score=60
+action_entropy=4.8

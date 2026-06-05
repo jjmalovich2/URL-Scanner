@@ -3,14 +3,14 @@ URL SCANNER - TODO / IDEAS
 
 HIGH PRIORITY (Usability & Core Functionality)
 -----------------------------------------------
-[ ] TLS/SNI Parsing - Most traffic is HTTPS on port 443. Currently the scanner only
+[x] TLS/SNI Parsing - Most traffic is HTTPS on port 443. Currently the scanner only
     reads plaintext HTTP "Host:" headers. Without parsing TLS Client Hello SNI,
     the tool misses the vast majority of real-world traffic. This is the #1 gap.
 
-[ ] Domain Whitelist - Remember domains the user clicked "Allow" on so they don't
+[x] Domain Whitelist - Remember domains the user clicked "Allow" on so they don't
     get nagged every time. Store in a local file (e.g., allowed_domains.txt).
 
-[ ] Configurable Thresholds - Move the hardcoded values (suspicious: 40/3.0,
+[x] Configurable Thresholds - Move the hardcoded values (suspicious: 40/3.0,
     action: 60/4.8) into the config/ folder so users can tune without recompiling.
 
 [ ] DPI-Aware Scaling - Replace SetProcessDPIAware() with per-monitor v2 awareness

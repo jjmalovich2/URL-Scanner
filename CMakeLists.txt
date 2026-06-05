@@ -14,12 +14,15 @@ add_executable(scanner
     src/gui_common.hpp
     src/stats.hpp
     src/dashboard.hpp
+    src/tls_parser.hpp
+    src/config.hpp
+    src/device_select.hpp
 )
 
 # Include Npcap headers and libraries
 target_include_directories(scanner PRIVATE src "${NPCAP_SDK_DIR}/Include")
 target_link_directories(scanner PRIVATE "${NPCAP_SDK_DIR}/Lib/x64")
-target_link_libraries(scanner PRIVATE wpcap Packet gdi32 user32)
+target_link_libraries(scanner PRIVATE wpcap Packet gdi32 user32 psapi)
 
 if(MSVC)
     target_compile_options(scanner PRIVATE /W4)

@@ -246,11 +246,6 @@ inline bool show_security_alert(const std::string& url, int score, double entrop
     SetWindowRgn(hwnd, hRgn, TRUE);
     DeleteObject(hRgn);
 
-    MessageBeep(MB_ICONEXCLAMATION);
-
-    FLASHWINFO fi = {sizeof(fi), hwnd, FLASHW_ALL | FLASHW_TIMERNOFG, 3, 0};
-    FlashWindowEx(&fi);
-
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
     SetForegroundWindow(hwnd);
